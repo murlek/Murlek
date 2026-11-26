@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#08090c">
+<title>Minimal Linea</title>
+<style>
+:root{--bg:#08090c;--panel:#15171d;--line:#343943;--red:#e51b2b;--white:#f4f5f7;--muted:#aeb3bd}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--white);font-family:Arial,Helvetica,sans-serif}
+body{background:radial-gradient(ellipse at 50% 15%,#20232b 0%,#0b0c10 48%,#050608 100%)}
+.shell{height:100dvh;min-height:360px;display:flex;flex-direction:column;padding:2.3vh 3.2vw 2vh}
+.top{height:8%;min-height:32px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #343943;padding:0 1vw;color:#e8eaf0;font-size:clamp(14px,1.6vw,22px)}
+.top-left{font-size:clamp(17px,2vw,26px);font-weight:bold;letter-spacing:.12em}
+.status{display:flex;gap:2vw;align-items:center;color:#d8dbe2}
+.hero{height:31%;display:flex;align-items:center;justify-content:space-between;padding:1vh 2vw 0}
+.timeblock{display:flex;align-items:center;gap:2vw}
+.clock{font-size:clamp(54px,11vw,142px);font-weight:300;letter-spacing:-.07em;line-height:1}
+.date{border-left:2px solid var(--red);padding-left:2vw;font-size:clamp(17px,2.5vw,34px);line-height:1.45;color:#d7d9df}
+.brand{font-size:clamp(17px,2.4vw,32px);font-weight:700;letter-spacing:.12em;color:#f0f1f4;border:2px solid #656b76;border-radius:50%;width:clamp(58px,8vw,108px);height:clamp(58px,8vw,108px);display:grid;place-items:center;box-shadow:0 0 0 5px #171a20,0 0 24px #000}
+.tiles{height:43%;display:grid;grid-template-columns:repeat(6,1fr);gap:1.1vw;align-items:center}
+.tile{height:82%;min-height:100px;border:1px solid #414753;border-bottom:3px solid var(--red);border-radius:18px;background:linear-gradient(145deg,#222630,#101217 65%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;box-shadow:0 8px 24px #0008;cursor:pointer;user-select:none;transition:transform .12s,border-color .12s}
+.tile:active{transform:scale(.97);border-color:var(--red)}
+.icon{font-size:clamp(30px,5vw,66px);line-height:1;color:#f3f4f6}
+.tile:first-child .icon{color:var(--red)}
+.tile:nth-child(5) .icon{color:#43a5ff}
+.label{font-size:clamp(13px,1.65vw,22px);font-weight:500;text-align:center}
+.bottom{height:14%;min-height:48px;border-top:1px solid #343943;display:flex;align-items:center;justify-content:space-between;padding:0 2vw;color:#d8dbe2}
+.bottom button{border:0;background:transparent;color:inherit;font-size:clamp(14px,1.7vw,22px);display:flex;align-items:center;gap:1vw;padding:10px;cursor:pointer}
+.bottom .gear{font-size:clamp(23px,3vw,38px)}
+@media(max-width:650px){.shell{padding:2vh 2vw}.hero{padding:0 1vw}.tiles{gap:1vw}.tile{border-radius:12px}.label{font-size:11px}.date{font-size:14px}.brand{display:none}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="top-left">LINEA</div>
+    <div class="status"><span>ᛒ</span><span>◉</span><span id="statusTime">--:--</span></div>
+  </header>
+  <section class="hero">
+    <div class="timeblock">
+      <div class="clock" id="clock">--:--</div>
+      <div class="date"><div id="weekday">—</div><div id="date">—</div></div>
+    </div>
+    <div class="brand">FIAT</div>
+  </section>
+  <main class="tiles">
+    <div class="tile" onclick="openCategory('maps')"><div class="icon">➤</div><div class="label">Navigasyon</div></div>
+    <div class="tile" onclick="openCategory('music')"><div class="icon">♫</div><div class="label">Müzik</div></div>
+    <div class="tile" onclick="openCategory('radio')"><div class="icon">▣</div><div class="label">Radyo</div></div>
+    <div class="tile" onclick="vehicle()"><div class="icon">▱</div><div class="label">Araç Bilgileri</div></div>
+    <div class="tile" onclick="bluetooth()"><div class="icon">ᛒ</div><div class="label">Bluetooth</div></div>
+    <div class="tile" onclick="apps()"><div class="icon">▦</div><div class="label">Uygulamalar</div></div>
+  </main>
+  <footer class="bottom">
+    <button onclick="settings()"><span class="gear">⚙</span><span>Ayarlar</span></button>
+    <button onclick="toggleNight()"><span id="moon" style="font-size:clamp(22px,3vw,38px)">☾</span><span id="nightText">Gece Modu</span></button>
+  </footer>
+</div>
+<script>
+function updateClock(){
+ const now=new Date(), tr={weekday:'long',day:'numeric',month:'long',year:'numeric'};
+ const hh=String(now.getHours()).padStart(2,'0'), mm=String(now.getMinutes()).padStart(2,'0');
+ document.getElementById('clock').textContent=hh+':'+mm;
+ document.getElementById('statusTime').textContent=hh+':'+mm;
+ document.getElementById('weekday').textContent=new Intl.DateTimeFormat('tr-TR',{weekday:'long'}).format(now);
+ document.getElementById('date').textContent=new Intl.DateTimeFormat('tr-TR',{day:'numeric',month:'long',year:'numeric'}).format(now);
+}
+updateClock();setInterval(updateClock,1000);
+function apps(){if(window.Car)Car.openApps();else alert('Uygulama menüsü Android cihazda çalışır.')}
+function openCategory(c){if(window.Car)Car.openCategory(c);else alert(c)}
+function bluetooth(){if(window.Car)Car.openBluetooth();else alert('Bluetooth ayarları Android cihazda açılır.')}
+function settings(){if(window.Car)Car.openSettings();else alert('Android ayarları cihazda açılır.')}
+function vehicle(){if(window.Car)Car.showVehicleInfo();else alert('CANBUS bağlantısı doğrulanmalı.')}
+function toggleNight(){document.body.classList.toggle('night');const on=document.body.classList.contains('night');document.getElementById('nightText').textContent=on?'Gündüz Modu':'Gece Modu';document.body.style.filter=on?'brightness(.72)':'none'}
+</script>
+</body>
+</html>
